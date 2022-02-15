@@ -1,7 +1,7 @@
 import numpy as np 
 from scipy import signal as scisig
-from mattoolbox import signal as matsig
-import reduct_frac
+from kslib.mattoolbox import signal as matsig
+from kslib import reduct_frac
 
 def FireEngineSirenF0(t,harmonics=[2,1,1,1,1,1,1,1,1]):
     tt = t%6
