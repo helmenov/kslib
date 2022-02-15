@@ -109,7 +109,7 @@ def doppler_effect_from_F0(f0, gharmonics, fs=44100,vs=40, vo=1/8, L=np.nan, D=2
     vc = 340  # sound speed in [m/s]
 
     N = len(f0)
-    nchannels = np.ndim(f0)
+    nchannels = f0.shape[1]
     t = np.arange(N)/fs
 
     vs = vs*1000/(60*60)
