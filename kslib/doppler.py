@@ -3,7 +3,7 @@ from scipy import signal as scisig
 from mattoolbox import signal as matsig
 import reduct_frac
 
-def FireEngineSirenF0(t,num_harmonics=9):
+def FireEngineSirenF0(t,harmonics=[2,1,1,1,1,1,1,1,1]):
     tt = t%6
     raise_region = np.where(np.logical_and(0<=tt,tt<2))[0]
     on_region = np.where(np.logical_and(2<=tt,tt<4))[0]
@@ -13,16 +13,16 @@ def FireEngineSirenF0(t,num_harmonics=9):
     f0[raise_region] = 390 + 250*np.log2(tt[raise_region]+1)
     f0[on_region] = 780
     f0[fall_region] = 780 - 170*(tt[fall_region]-4)
-    return np.array([(h+1)*f0 for h in range(num_harmonics)]).T 
+    return np.array([harmonics[h]*(h+1)*f0 for h in range(len(harmonics))]).T 
 
-def AmburanceSirenF0(t,num_harmonics=9):
+def AmburanceSirenF0(t,harmonics=[2,1,1,1,1,1,1,1,1]):
     tt = t % 1.3
     on_region = np.where(np.logical_and(0<=tt,tt<0.65))[0]
     off_region = np.where(np.logical_and(0.65<=tt,tt<1.3))[0]
     f0 = np.full((len(t),),np.nan)
     f0[on_region] = 960
     f0[off_region] = 780
-    return np.array([(h+1)*f0 for h in range(num_harmonics)]).T 
+    return np.array([harmonics[h]*(h+1)*f0 for h in range(len(harmonics))]).T 
 
 
 def doppler_effect_from_signal(input, fs=44100, vs=40, vo=1/8, L=np.nan, D=20, precision=3, lenframe=64):
