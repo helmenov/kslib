@@ -3,7 +3,7 @@ from scipy import signal as scisig
 from kslib.mattoolbox import signal as matsig
 from kslib import reduct_frac
 
-def FireEngineSirenF0(t,harmonics=[2,1,1,1,1,1,1,1,1]):
+def FireEngineSirenF0(t,harmonics=np.array([2,1,1,1,1,1,1,1,1])):
     tt = t%6
     raise_region = np.where(np.logical_and(0<=tt,tt<2))[0]
     on_region = np.where(np.logical_and(2<=tt,tt<4))[0]
@@ -15,7 +15,7 @@ def FireEngineSirenF0(t,harmonics=[2,1,1,1,1,1,1,1,1]):
     f0[fall_region] = 780 - 170*(tt[fall_region]-4)
     return np.array([harmonics[h]*(h+1)*f0 for h in range(len(harmonics))]).T 
 
-def AmburanceSirenF0(t,harmonics=[2,1,1,1,1,1,1,1,1]):
+def AmburanceSirenF0(t,harmonics=np.array([2,1,1,1,1,1,1,1,1])):
     tt = t % 1.3
     on_region = np.where(np.logical_and(0<=tt,tt<0.65))[0]
     off_region = np.where(np.logical_and(0.65<=tt,tt<1.3))[0]
