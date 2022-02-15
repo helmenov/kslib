@@ -3,7 +3,7 @@ from scipy import signal as scisig
 from kslib.mattoolbox import signal as matsig
 from kslib import reduct_frac
 
-def FireEngineSirenF0(t,harmonics=np.array([2,1,1,1,1,1,1,1,1])):
+def FireEngineSirenF0(t,num_harmonics=9):
     tt = t%6
     raise_region = np.where(np.logical_and(0<=tt,tt<2))[0]
     on_region = np.where(np.logical_and(2<=tt,tt<4))[0]
@@ -13,16 +13,16 @@ def FireEngineSirenF0(t,harmonics=np.array([2,1,1,1,1,1,1,1,1])):
     f0[raise_region] = 390 + 250*np.log2(tt[raise_region]+1)
     f0[on_region] = 780
     f0[fall_region] = 780 - 170*(tt[fall_region]-4)
-    return np.array([harmonics[h]*(h+1)*f0 for h in range(len(harmonics))]).T 
+    return np.array([(h+1)*f0 for h in range(num_harmonics)]).T 
 
-def AmburanceSirenF0(t,harmonics=np.array([2,1,1,1,1,1,1,1,1])):
+def AmburanceSirenF0(t,num_harmonics=9):
     tt = t % 1.3
     on_region = np.where(np.logical_and(0<=tt,tt<0.65))[0]
     off_region = np.where(np.logical_and(0.65<=tt,tt<1.3))[0]
     f0 = np.full((len(t),),np.nan)
     f0[on_region] = 960
     f0[off_region] = 780
-    return np.array([harmonics[h]*(h+1)*f0 for h in range(len(harmonics))]).T 
+    return np.array([(h+1)*f0 for h in range(num_harmonics)]).T 
 
 
 def doppler_effect_from_signal(input, fs=44100, vs=40, vo=1/8, L=np.nan, D=20, precision=3, lenframe=64):
@@ -90,7 +90,7 @@ def doppler_effect_from_signal(input, fs=44100, vs=40, vo=1/8, L=np.nan, D=20, p
 
     return output, fcoeff, average_fcoeff, gain, average_gain
 
-def doppler_effect_from_F0(f0, fs=44100, vs=40, vo=1/8, L=np.nan, D=20, precision=3, lenframe=64, loc_gain=False):
+def doppler_effect_from_F0(f0, gharmonics, fs=44100,vs=40, vo=1/8, L=np.nan, D=20, precision=3, lenframe=64, loc_gain=False):
     """function applies changes in frequency that occurrs due to the doppler effect
     Args:
         f0 (duration(t-index), nchannel): 基本周波数
@@ -135,9 +135,8 @@ def doppler_effect_from_F0(f0, fs=44100, vs=40, vo=1/8, L=np.nan, D=20, precisio
 
     output = np.full((N,),0.0)
     for ichannel in range(nchannels):
-        gharmonics = 2**(-ichannel)
         phase_doppler = 2*np.pi*np.cumsum(fcoeff*f0[:,ichannel])/fs # int f0(t)*fcoeff(t) dt
-        output +=  gharmonics * np.sin(phase_doppler)
+        output +=  gharmonics[ichannel] * np.sin(phase_doppler)
     output *= gain
 
     return output, fcoeff, gain
