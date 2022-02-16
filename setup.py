@@ -12,7 +12,7 @@ install_requires = \
 
 setup_kwargs = {
     'name': 'kslib',
-    'version': '0.1.6',
+    'version': '0.1.7',
     'description': '',
     'long_description': '',
     'author': 'Kotaro SONODA',

@@ -111,11 +111,30 @@ def scaling(f,xlim,ylim):
     f2 = (f-xmu)/xd*yd+ymu
     return f2
 
-def upsampling(x,p,q):
+def upsampling(x,t,p,q):
+    """
+    change the sampling frequency *p/q
+    Notice: Not occur the frequency shift in signal x.
+    """
     xu = []
+    tu = []
     for k in range(len(x)-1):
         for i in range(p):
-            xu.append((p-i)/p * x[k] + i/p *x[k+1])
+            xu.append((p-i)/p * x[k] + i/p * x[k+1])
+            tu.append((p-i)/p * t[k] + i/p * t[k+1])
             #print(f'\r[{k*p+i:7d}/{len(x)*p:7d}',end='')
+    xu.append(x[-1])
+    tu.append(t[-1])
     xud = xu[::q]
-    return xud
+    tud = tu[::q]
+    
+    return xud, tud
+
+def uppitch(x,t,p,q):
+    """
+    It changes the timing value *q/p
+    sampling frequency also changed *p/q
+    """
+    xp = np.copy(x)
+    tp = np.copy(t)/p*q
+    return xp, tp

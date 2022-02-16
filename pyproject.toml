@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "kslib"
-version = "0.1.6"
+version = "0.1.7"
 description = ""
 authors = ["Kotaro SONODA <kotaro1976@gmail.com>"]
 license = "MIT"
@@ -24,6 +24,7 @@ SciencePlots = "^1.0.9"
 Pillow = "9.0.0"
 ipython = "^8.0.1"
 jupyter-contrib-nbextensions = "^0.5.1"
+crying-vegetable = {git = "https://github.com/helmenov/crying_vegetable", rev = "main"}
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]

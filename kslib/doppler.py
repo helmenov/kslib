@@ -25,7 +25,7 @@ def AmburanceSirenF0(t,num_harmonics=9):
     return np.array([(h+1)*f0 for h in range(num_harmonics)]).T 
 
 
-def doppler_effect_from_signal(input, fs=44100, vs=40, vo=1/8, L=np.nan, D=20, precision=3, lenframe=64):
+def doppler_effect_from_signal(input, fs=44100, vs=40, vo=1/8, L=np.nan, D=20, precision=3, lenframe=64, loc_gain):
     """function applies changes in frequency that occurrs due to the doppler effect
     Args:
         input: 
@@ -41,39 +41,26 @@ def doppler_effect_from_signal(input, fs=44100, vs=40, vo=1/8, L=np.nan, D=20, p
         fcoeff: # ドップラーシフト係数
     """
         
-    vc = 340  # sound speed in [m/s]
     nhop = lenframe
 
     N = len(input)
-    t = np.arange(N)/fs
+    duration = N/fs
 
-    vs = vs*1000/(60*60)
-    vo = vo*1000/(60)
+    fcoef, gcoef, t = doppler_effect(fs,duration,vs,vo,L,D)
 
-    if np.isnan(L): # Lを設定していないときは，信号長の真ん中で目の前を通過するようにLを決める
-        L = vs*N/fs/2 
+    if loc_gain == True:
+        gain = gcoef
+    else:
+        gain = np.ones_like(t)
 
-    xs = -L+vs*t
-    yo = -D+vo*t 
-
-    vs_cos = -xs/np.sqrt(xs**2 + yo**2)
-    vo_cos = -yo/np.sqrt(xs**2 + yo**2)
-
-    vs_on = vs * vs_cos 
-    vo_on = -vo * vo_cos 
-
-    fcoeff = (vc-vo_on)/(vc-vs_on)
-    gain = 1/(xs**2 + yo**2)
-
-
-    average_fcoeff = np.zeros_like(fcoeff)
+    average_fcoeff = np.zeros_like(fcoef)
     average_gain = np.zeros_like(gain)
 
     for istart in range(0,N,nhop):
         iend = np.amin([istart+lenframe,N])
         len_i = iend-istart
-        avf = np.mean(fcoeff[istart:iend])
-        average_fcoeff[istart:iend] = int(np.mean(fcoeff[istart:iend])*(10**precision))/(10**precision)
+        avf = np.mean(fcoef[istart:iend])
+        average_fcoeff[istart:iend] = int(np.mean(fcoef[istart:iend])*(10**precision))/(10**precision)
         avg = np.mean(gain[istart:iend])
         average_gain[istart:iend] = avg
 
@@ -88,7 +75,7 @@ def doppler_effect_from_signal(input, fs=44100, vs=40, vo=1/8, L=np.nan, D=20, p
         len_o = len(outp)
         ystart += len_o
 
-    return output, fcoeff, average_fcoeff, gain, average_gain
+    return output, fcoef, average_fcoeff, gain, average_gain
 
 def doppler_effect_from_F0(f0, gharmonics, fs=44100,vs=40, vo=1/8, L=np.nan, D=20, precision=3, lenframe=64, loc_gain=False):
     """function applies changes in frequency that occurrs due to the doppler effect
@@ -105,11 +92,42 @@ def doppler_effect_from_F0(f0, gharmonics, fs=44100,vs=40, vo=1/8, L=np.nan, D=2
         output: # ドップラー効果のかかった信号（長さはinputと異なることもある）
         fcoeff: # ドップラーシフト係数
     """
-        
-    vc = 340  # sound speed in [m/s]
-
     N = len(f0)
+    duration = N/fs
+
+    fcoef, gcoef, t = doppler_effect(fs, duration, vs, vo, L, D)
+
     nchannels = f0.shape[1]
+
+    if loc_gain == True:
+        gain = gcoef
+    else:
+        gain = np.ones_like(t)
+
+    output = np.full((N,),0.0)
+    for ichannel in range(nchannels):
+        phase_doppler = 2*np.pi*np.cumsum(fcoef*f0[:,ichannel])/fs # int f0(t)*fcoeff(t) dt
+        output +=  gharmonics[ichannel] * np.sin(phase_doppler)
+    output *= gain
+
+    return output, fcoef, gain
+
+def doppler_effect(fs, duration, vs=40, vo=1/8, L=np.nan, D=20, vc = 340):
+    """function applies changes in frequency that occurrs due to the doppler effect
+    Args:
+        fs : sampling frequency [Hz]
+        duration : coef duration [s]
+        vs = 40 # in [km/h]
+        vo = 1/8 # in [km/m]
+        L = 100 # in [m] 
+        D = 20 # in [m]
+        vc = 340 # sound velocity [m/s]
+    Return: 
+        fcoef: # ドップラーシフト係数
+        gcoef: # 距離減衰係数
+        t: timestamp [s]
+    """
+    N = duration*fs
     t = np.arange(N)/fs
 
     vs = vs*1000/(60*60)
@@ -127,16 +145,7 @@ def doppler_effect_from_F0(f0, gharmonics, fs=44100,vs=40, vo=1/8, L=np.nan, D=2
     vs_on = vs * vs_cos 
     vo_on = -vo * vo_cos 
 
-    fcoeff = (vc-vo_on)/(vc-vs_on)
-    if loc_gain == True:
-        gain = 1/(xs**2 + yo**2)
-    else:
-        gain = np.ones_like(t)
+    fcoef = (vc-vo_on)/(vc-vs_on)
+    gcoef = 1/(xs**2 + yo**2)
 
-    output = np.full((N,),0.0)
-    for ichannel in range(nchannels):
-        phase_doppler = 2*np.pi*np.cumsum(fcoeff*f0[:,ichannel])/fs # int f0(t)*fcoeff(t) dt
-        output +=  gharmonics[ichannel] * np.sin(phase_doppler)
-    output *= gain
-
-    return output, fcoeff, gain
+    return fcoef, gcoef, t
