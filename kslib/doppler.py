@@ -25,7 +25,7 @@ def AmburanceSirenF0(t,num_harmonics=9):
     return np.array([(h+1)*f0 for h in range(num_harmonics)]).T 
 
 
-def doppler_effect_from_signal(input, fs=44100, vs=40, vo=1/8, L=np.nan, D=20, precision=3, lenframe=64, loc_gain):
+def doppler_effect_from_signal(input, fs=44100, vs=40, vo=1/8, L=np.nan, D=20, precision=3, lenframe=64, loc_gain=False):
     """function applies changes in frequency that occurrs due to the doppler effect
     Args:
         input: 
