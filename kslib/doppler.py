@@ -1,9 +1,9 @@
-import numpy as np 
+import numpy as np
 from scipy import signal as scisig
 from kslib.mattoolbox import signal as matsig
 from kslib import reduct_frac
 
-def FireEngineSirenF0(t,num_harmonics=9):
+def FireEngineSirenF0(t:List[float],num_harmonics:int=9):
     tt = t%6
     raise_region = np.where(np.logical_and(0<=tt,tt<2))[0]
     on_region = np.where(np.logical_and(2<=tt,tt<4))[0]
@@ -13,7 +13,7 @@ def FireEngineSirenF0(t,num_harmonics=9):
     f0[raise_region] = 390 + 250*np.log2(tt[raise_region]+1)
     f0[on_region] = 780
     f0[fall_region] = 780 - 170*(tt[fall_region]-4)
-    return np.array([(h+1)*f0 for h in range(num_harmonics)]).T 
+    return np.array([(h+1)*f0 for h in range(num_harmonics)]).T
 
 def AmburanceSirenF0(t,num_harmonics=9):
     tt = t % 1.3
@@ -22,25 +22,25 @@ def AmburanceSirenF0(t,num_harmonics=9):
     f0 = np.full((len(t),),np.nan)
     f0[on_region] = 960
     f0[off_region] = 780
-    return np.array([(h+1)*f0 for h in range(num_harmonics)]).T 
+    return np.array([(h+1)*f0 for h in range(num_harmonics)]).T
 
 
 def doppler_effect_from_signal(input, fs=44100, vs=40, vo=1/8, L=np.nan, D=20, precision=3, lenframe=64, loc_gain=False):
     """function applies changes in frequency that occurrs due to the doppler effect
     Args:
-        input: 
+        input:
         vs = 40 # in [km/h]
         vo = 1/8 # in [km/m]
-        L = 100 # in [m] 
+        L = 100 # in [m]
         D = 20 # in [m]
         precision = 3 # doppler shift fcoeffの精度パラメータ
                       #  (アップサンプリング 1/int(fcoeff):precision=0, (10^precision)/int(fcoeff*10^precision)
-        lenframe = 64 # frame length 
-    Return: 
+        lenframe = 64 # frame length
+    Return:
         output: # ドップラー効果のかかった信号（長さはinputと異なることもある）
         fcoeff: # ドップラーシフト係数
     """
-        
+
     nhop = lenframe
 
     N = len(input)
@@ -67,7 +67,7 @@ def doppler_effect_from_signal(input, fs=44100, vs=40, vo=1/8, L=np.nan, D=20, p
         inp = input[istart:iend]
         outp = avg * matsig.resample(inp, int(10**precision), int(avf*(10**precision)))
 
-        if istart == 0: 
+        if istart == 0:
             output = outp
             ystart = istart
         else:
@@ -83,12 +83,12 @@ def doppler_effect_from_F0(f0, gharmonics, fs=44100,vs=40, vo=1/8, L=np.nan, D=2
         f0 (duration(t-index), nchannel): 基本周波数
         vs = 40 # in [km/h]
         vo = 1/8 # in [km/m]
-        L = 100 # in [m] 
+        L = 100 # in [m]
         D = 20 # in [m]
         precision = 3 # doppler shift fcoeffの精度パラメータ
                       #  (アップサンプリング 1/int(fcoeff):precision=0, (10^precision)/int(fcoeff*10^precision)
-        lenframe = 64 # frame length 
-    Return: 
+        lenframe = 64 # frame length
+    Return:
         output: # ドップラー効果のかかった信号（長さはinputと異なることもある）
         fcoeff: # ドップラーシフト係数
     """
@@ -119,10 +119,10 @@ def doppler_effect(fs, duration, vs=40, vo=1/8, L=np.nan, D=20, vc = 340):
         duration : coef duration [s]
         vs = 40 # in [km/h]
         vo = 1/8 # in [km/m]
-        L = 100 # in [m] 
+        L = 100 # in [m]
         D = 20 # in [m]
         vc = 340 # sound velocity [m/s]
-    Return: 
+    Return:
         fcoef: # ドップラーシフト係数
         gcoef: # 距離減衰係数
         t: timestamp [s]
@@ -134,16 +134,16 @@ def doppler_effect(fs, duration, vs=40, vo=1/8, L=np.nan, D=20, vc = 340):
     vo = vo*1000/(60)
 
     if np.isnan(L): # Lを設定していないときは，信号長の真ん中で目の前を通過するようにLを決める
-        L = vs*N/fs/2 
+        L = vs*N/fs/2
 
     xs = -L+vs*t
-    yo = -D+vo*t 
+    yo = -D+vo*t
 
     vs_cos = -xs/np.sqrt(xs**2 + yo**2)
     vo_cos = -yo/np.sqrt(xs**2 + yo**2)
 
-    vs_on = vs * vs_cos 
-    vo_on = -vo * vo_cos 
+    vs_on = vs * vs_cos
+    vo_on = -vo * vo_cos
 
     fcoef = (vc-vo_on)/(vc-vs_on)
     gcoef = 1/(xs**2 + yo**2)

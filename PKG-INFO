@@ -1,6 +1,6 @@
 Metadata-Version: 2.1
 Name: kslib
-Version: 0.1.7
+Version: 0.1.8
 Summary: 
 License: MIT
 Author: Kotaro SONODA
@@ -10,7 +10,6 @@ Classifier: License :: OSI Approved :: MIT License
 Classifier: Programming Language :: Python :: 3
 Classifier: Programming Language :: Python :: 3.10
 Requires-Dist: numpy (>=1.22.2,<2.0.0)
-Requires-Dist: pandas (>=1.4.0,<2.0.0)
 Requires-Dist: scipy (>=1.8.0,<2.0.0)
 Description-Content-Type: text/markdown
 

@@ -8,18 +8,18 @@ package_data = \
 {'': ['*']}
 
 install_requires = \
-['numpy>=1.22.2,<2.0.0', 'pandas>=1.4.0,<2.0.0', 'scipy>=1.8.0,<2.0.0']
+['numpy>=1.22.2,<2.0.0', 'scipy>=1.8.0,<2.0.0']
 
 setup_kwargs = {
     'name': 'kslib',
-    'version': '0.1.7',
+    'version': '0.1.8',
     'description': '',
     'long_description': '',
     'author': 'Kotaro SONODA',
     'author_email': 'kotaro1976@gmail.com',
-    'maintainer': None,
-    'maintainer_email': None,
-    'url': None,
+    'maintainer': 'None',
+    'maintainer_email': 'None',
+    'url': 'None',
     'packages': packages,
     'package_data': package_data,
     'install_requires': install_requires,
