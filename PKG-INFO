@@ -14,6 +14,7 @@ Requires-Dist: bitarray (>=2.7.3,<3.0.0)
 Requires-Dist: bitstring (>=4.0.2,<5.0.0)
 Requires-Dist: ipython (>=8.14.0,<9.0.0)
 Requires-Dist: numpy (>=1.22.2,<2.0.0)
+Requires-Dist: pyroomacoustics (>=0.7.3,<0.8.0)
 Requires-Dist: scipy (>=1.8.0,<2.0.0)
 Requires-Dist: sympy (>=1.12,<2.0)
 Description-Content-Type: text/markdown
