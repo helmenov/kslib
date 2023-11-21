@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "kslib"
-version = "0.1.8"
-description = ""
+version = "0.1.10"
+description = "kslib: Library by K.Sonoda"
 authors = ["Kotaro SONODA <kotaro1976@gmail.com>"]
 license = "MIT"
 readme = "README.md"
@@ -11,6 +11,11 @@ include = []
 python = ">=3.10,<3.11"
 numpy = "^1.22.2"
 scipy = "^1.8.0"
+bitarray = "^2.7.3"
+bitstring = "^4.0.2"
+sympy = "^1.12"
+acoustics = "^0.2.6"
+ipython = "^8.14.0"
 
 
 [tool.poetry.dev-dependencies]
@@ -25,6 +30,9 @@ ipython = "^8.0.1"
 jupyter-contrib-nbextensions = "^0.5.1"
 #crying-vegetable = {git = "https://github.com/helmenov/crying_vegetable", rev = "main"}
 pandas = "^1.4.0"
+
+[tool.poetry.group.dev.dependencies]
+kogi = "^0.4.5"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]

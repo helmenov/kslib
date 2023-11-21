@@ -27,8 +27,6 @@ def factorization(n: int)->List[Tuple[int,int]]:
 
     return fact
 
-
-
 def num_of_divisor(n: int)->int:
     """Count of Divisor of Natural number
 
@@ -50,7 +48,7 @@ def sum_of_p_divisors(p,n):
         n -= 1
     return a + 1
 
-def sum_of_divisors(n):
+def sum_of_divisors(n:int)->int:
     a = 1
     for p, q in factorization(n):
         a *= sum_of_p_divisors(p,q)
@@ -79,15 +77,15 @@ def p_divisors(p,n):
         a.append(p ** i)
     return a
 
-def divisors(n):
+def divisors(n:int)->List[int]:
     xs = factorization(n)
     ys = p_divisors(xs[0][0], xs[0][1])
     for p, q in xs[1:]:
         ys = [x * y for x in p_divisors(p,q) for y in ys]
     return sorted(ys)
 
-def perfectnum_in(n:int)->List[int]:
-    """List-up perfect numbers less than n
+def perfectnums_leq(n:int)->List[int]:
+    """List-up perfect numbers less than or equal n
 
     Args:
         n (int): Natural number

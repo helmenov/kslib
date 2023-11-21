@@ -1,25 +1,53 @@
 import numpy as np
 from scipy import fftpack as scifft
+from typing import Tuple
+
+def rcunwrap(x: np.ndarray) -> Tuple[np.ndarray, int]:
+    '''
+        unwrap  the phase and removes phase corresponding to integer lag.
+    '''
+    n: int = len(x)
+    nh: int = int(np.floor((n+1)/2))
+    y: np.ndarray = np.unwrap(x)
+    nd: int = np.round((y[nh]/np.pi))
+    for i in range(len(y)):
+        y[i] = y[i] - np.pi*nd*i/nh
+    return y, nd
 
 class fourierAnalysis():
     def __init__(self, x):
         X = scifft.fft(x)
+        #X = X[:int(np.floor(len(X)/2+1))]
+
         self.__X = X
 
         A = np.abs(X)
         self.__amp = A
 
         logA = np.log(np.array([a.clip(min=1e-7) for a in A]))
+
+        ## weighted logA
+        L = len(logA)
+        w_logA = np.hanning(L+1)[:L] * logA
+
         self.__dB = 20 * logA
 
-        Phi = np.unwrap(np.angle(X))
+        ###
+        #  Phi : phase spectrum
+        Phi,ndelay = rcunwrap(np.angle(X))
         self.__phase = Phi
+        self.ndelay = ndelay
 
         C_amp = scifft.ifft(logA)
+        C_amp = C_amp[:int(np.floor(len(C_amp)/2+1))]
+
         self.__C_amp = C_amp
 
         jPhi = np.array([complex(0,p) for p in Phi])
+
         C_phase = scifft.ifft(jPhi)
+        C_phase = C_phase[:int(np.floor(len(C_phase)/2+1))]
+
         self.__C_phase = C_phase
 
         lenC = len(C_amp)
@@ -95,6 +123,12 @@ class fourierAnalysis():
         """Phase Spectrum (real)
         """
         return np.real(self.__phase)
+
+    @property
+    def rcphase(self):
+        """Phase Spectrum -RC (real)
+        """
+        return np.real(self.__rcphase)
 
     @property
     def C_complex(self):
