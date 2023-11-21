@@ -2,6 +2,7 @@ import numpy as np
 from scipy import signal as scisig
 from kslib.mattoolbox import signal as matsig
 from kslib import reduct_frac
+from typing import List
 
 def FireEngineSirenF0(t:List[float],num_harmonics:int=9):
     tt = t%6
