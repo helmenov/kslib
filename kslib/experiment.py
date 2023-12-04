@@ -2,6 +2,7 @@ from pathlib import Path
 import string
 from datetime import datetime
 import sys
+import pickle
 
 def get_rnd_suffix() -> str:
     return '_' + ''.join(random.choices(string.ascii_letters + string.digits, k=8))
@@ -9,20 +10,22 @@ def get_rnd_suffix() -> str:
 def get_date_suffix() -> str:
     return '_' + datetime.now().strftime("%Y-%m-%d_%H_%M_%S_%f")
 
-def make_result_path(rootdir_res:Path,suffix_type:str) -> Path:
-    res_dir = Path(rootdir_res)
-    try:
-        res_dir.mkdir()
-    except FileExistsError:
+def make_result_dir(prefix:str,suffix_type:str) -> Path:
+    prefix = Path(prefix)
+    prefix_parent = prefix.parent
+    prefix_name = prefix.name
+    if prefix_parent.is_dir():
         pass
+    else:
+        prefix_parent.mkdir(exist_ok=False)
     suffix_func = {'random':get_rnd_suffix, 'date':get_date_suffix}
-    res_dir.joinpath(suffix_func['date'])
+    res_dir = prefix_parent.joinpath(prefix_name + suffix_func['date']())
     res_dir.mkdir(exist_ok=False)
     return res_dir
 
-def logger(res_dir):
+def logger(prefix_dir):
     """Decorator 'logger'
-    @logger(res_dir)
+    @logger(prefix_dir)
     def func1(x,y):
         z = x+y
         retunr z
@@ -36,17 +39,11 @@ def logger(res_dir):
     2
     3
     """
-    res_dir = Path(res_dir)
-    if res_dir.is_dir():
-        ans = input(f'{res_dir} is already exist. add lines? [y,N]')
-        if ans == 'y':
-            pass
-        else:
-            raise FileExistsError
-    else:
-        res_dir.mkdir()
+    prefix_dir = Path(prefix_dir)
+
     def _logger(Func):
         def wrapper(*args, **keywords):
+            res_dir = make_result_dir(prefix_dir,'date')
             with res_dir.joinpath('command.log').open('a') as f:
                 f.writelines(f'{Func.__name__} starts...\n')
                 f.writelines('\n')
@@ -73,7 +70,8 @@ def logger(res_dir):
                 else:
                     f.writelines('<<out>>\n')
                     f.writelines(f'{v}\n')
-                f.writelines('\f')
+                with res_dir.joinpath('results.pickle').open('wb') as p:
+                    pickle.dump(v,p)
                 return v
         return wrapper
     return _logger
