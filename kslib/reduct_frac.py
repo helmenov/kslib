@@ -1,4 +1,5 @@
 import numpy as np
+from Typing import Tuple
 
 def fraction_expand(p:int, q:int)->Tuple[int,int,int]:
     """p/qを整数部n0と小数部に分け，小数部を1/(p0/q0)にする
