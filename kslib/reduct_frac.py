@@ -1,4 +1,5 @@
 import numpy as np
+from typing import Tuple
 
 def fraction_expand(p:int, q:int)->Tuple[int,int,int]:
     """p/qを整数部n0と小数部に分け，小数部を1/(p0/q0)にする
@@ -10,6 +11,10 @@ def fraction_expand(p:int, q:int)->Tuple[int,int,int]:
         n0 (int): 整数部
         p0 (int): 小数部を1/(p0/q0)で表したときのp0
         q0 (int): 小数部を1/(p0/10)で表したときのq0
+
+    >>> n0,p0,q0 = fraction_expand(3,2)
+    >>> print(f'{p} / {q} => {n0} + {q0} / {p0}')
+    3 / 2 => 1 + 1 / 2
     """
     if p!= int(p):
         n0 = int(np.floor(p/q))
@@ -26,12 +31,12 @@ def fraction_shrink(n:int,p:int,q:int)->Tuple[int,int]:
     """ n + 1/(p/q) -> p0/q0
 
     Args:
-        n (int): _description_
-        p (int): _description_
-        q (int): _description_
+        n (int): 整数部n
+        p (int): 小数部を1/(p/q)としたときのp
+        q (int): 小数部を1/(p/q)としたときのq
 
     Returns:
-        Tuple[int,int]: _description_
+        Tuple[int,int]: n + 1/(p/q) -> p0/q0 としたときの (p0, q0)
     """
     p0 = n*p+q
     q0 = p
@@ -80,3 +85,7 @@ def reduct_frac(p:float,q:int)->Tuple[int,int]:
     q = q0
 
     return p,q
+
+if __name__ == "__main__":
+    print(f'{reduct_frac(8765,4321)=}')
+
