@@ -10,6 +10,7 @@
 from fractions import Fraction
 from kslib.reduct_frac import reduct_frac as ksfrac
 import numpy as np
+from scipy import fftpack as scifft
 
 def note2freq(note,octave,A4=440):
     """音名とオクターブから周波数に変換

@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "kslib"
-version = "0.1.17"
+version = "0.1.18"
 description = "kslib: Library by K.Sonoda"
 authors = ["Kotaro SONODA <kotaro1976@gmail.com>"]
 license = "MIT"
