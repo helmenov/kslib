@@ -150,3 +150,43 @@ def harmonic2octave(harmonic,denominator=1):
             raise ValueError
     octave = np.log2(harmonic.numerator) - np.log2(harmonic.denominator)
     return octave
+
+def interval_correlate(x,y,ti=1e-2,standard=True):
+    """interval_correlate:
+    2つのtiming dataの相互相関
+
+    Input:
+        x,y : timing data
+        ti : tick interval, defalut:1e-7
+        standard: Standardize option, default:True
+    Output:
+        t : timing delay. same dimension with x,y
+        xcor : cross correlations
+
+    >>> x = [1, 2, 4, 7, 9] # f(t) = 1 if t in x else 0
+    >>> y = [4, 7, 10, 12]  # g(t) = 1 if t in y else 0
+    >>> t, xcor = interval_correlate(x,y)
+    """
+    xxl = np.ceil(np.max(x) / ti).astype(int)
+    yyl = np.ceil(np.max(y) / ti).astype(int)
+    N = xxl if xxl > yyl else yyl
+    tl = xxl + yyl - 1
+    t = (np.arange(tl)-yyl+1)*ti
+
+    xx = np.zeros(xxl)
+    xx[(x / ti).astype(int)] = 1
+    xx = np.r_[np.zeros(yyl-1),xx]
+
+    yy = np.zeros(yyl)
+    yy[(y / ti).astype(int)] = 1
+    yy = np.r_[yy,np.zeros(xxl-1)]
+
+    XX = scifft.fft(xx)
+    YY = scifft.fft(yy)
+    XY = XX * np.conj(YY)
+    xy = np.real(scifft.ifft(XY))/(N*ti)
+    if standard:
+        tx, cx = interval_correlate(x,x,standard=False)
+        ty, cy = interval_correlate(y,y,standard=False)
+        xy /= np.sqrt(cx[tx==0])*np.sqrt(cy[ty==0])
+    return t, xy
