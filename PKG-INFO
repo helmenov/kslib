@@ -1,13 +1,14 @@
 Metadata-Version: 2.1
 Name: kslib
-Version: 0.1.14
+Version: 0.1.15
 Summary: kslib: Library by K.Sonoda
 License: MIT
 Author: Kotaro SONODA
 Author-email: kotaro1976@gmail.com
-Requires-Python: >=3.10,<4.0
+Requires-Python: >=3.9,<4.0
 Classifier: License :: OSI Approved :: MIT License
 Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 3.9
 Classifier: Programming Language :: Python :: 3.10
 Classifier: Programming Language :: Python :: 3.11
 Requires-Dist: acoustics (>=0.2.6,<0.3.0)

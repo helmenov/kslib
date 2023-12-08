@@ -41,7 +41,7 @@ def freq2note(freq, A4=440):
         (note, octave): 音名，オクターブ
     """
     l_note = ['A','B-','B','C','D-','D','E-','E','F','G-','G','A-']
-    j_min = 10000
+    j_min = 100000
     for cc in range(12):
         for oct in range(10):
             j = (4.0 - np.log2(A4) + np.log2(freq) - oct - cc/12.0)**2
