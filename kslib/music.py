@@ -7,7 +7,7 @@
 - octave2harmonic(octave) -> harmonic:Fraction
 - harmonic2octave(harmonic:Fraction) -> octave
 """
-from fraction import Fraction
+from fractions import Fraction
 from kslib.reduct_frac import reduct_frac as ksfrac
 import numpy as np
 
