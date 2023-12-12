@@ -33,12 +33,12 @@ def fourier_integral(func, a, b, domain='time'):
     Output:
         Function : 変数omegaの関数
     """
-    if domain == 'time':
+    if domain == 'time': # CFT
         def _func(omega):
             def intee(t):
                 return func(t) * np.exp(-1j * omega * t)
             return c_quad(intee, a, b)[0]
-    elif domain == 'omega':
+    elif domain == 'omega': # ICFT
         def _func(t):
             def intee(omega):
                 return 1/(2*np.pi) * func(omega) * np.exp(1j * omega * t)
