@@ -1,5 +1,6 @@
 import numpy as np
 from typing import Tuple
+from scipy import fftpack as scifft
 
 # それぞれのスペクトルの横軸をlog2する関数
 def mylogx(xy:Tuple):
