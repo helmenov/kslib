@@ -15,7 +15,7 @@ def z(x):
     xx = (x-m)/s
     return xx
 
-def myxcor(x:Tuple, y:Tuple, ti=1e-3, standardize=True):
+def myxcor(x:Tuple, y:Tuple, ti=1e-3, standardize=True, normalize=True):
     """cross correlation R_{x,y}(tau), in case
         timings(indices) for x is  differ from those for y.
 
@@ -35,7 +35,13 @@ def myxcor(x:Tuple, y:Tuple, ti=1e-3, standardize=True):
     tl = lx + ly - 1
     tau = (np.arange(tl)-ly)*ti
 
-    zx = z(x[1])
+    if normalize == True:
+        zx = z(x[1])
+        zy = z(y[1])
+    else:
+        zx = x[1]
+        zy = y[1]
+
     gx = np.zeros(lx)
     gx[((x[0]-t_begin) / ti).astype(int)] = zx
     gx = np.r_[np.zeros(ly-1), gx]
