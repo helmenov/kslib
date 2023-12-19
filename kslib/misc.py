@@ -9,6 +9,12 @@ def mylogx(xy:Tuple):
     lx = np.log2(xy[0].clip(1e-7))
     return lx,xy[1]
 
+def z(x):
+    m = np.mean(x)
+    s = np.std(x,ddof=1)
+    xx = (x-m)/s
+    return xx
+
 def myxcor(x:Tuple, y:Tuple, ti=1e-3, standardize=True):
     """cross correlation R_{x,y}(tau), in case
         timings(indices) for x is  differ from those for y.
@@ -29,12 +35,14 @@ def myxcor(x:Tuple, y:Tuple, ti=1e-3, standardize=True):
     tl = lx + ly - 1
     tau = (np.arange(tl)-ly)*ti
 
+    zx = z(x[1])
     gx = np.zeros(lx)
-    gx[((x[0]-t_begin) / ti).astype(int)] = x[1]
+    gx[((x[0]-t_begin) / ti).astype(int)] = zx
     gx = np.r_[np.zeros(ly-1), gx]
 
+    zy = z(y[1])
     gy = np.zeros(ly)
-    gy[((y[0]-t_begin) / ti).astype(int)] = y[1]
+    gy[((y[0]-t_begin) / ti).astype(int)] = zy
     gy = np.r_[gy, np.zeros(lx-1)]
 
     Gx = scifft.fft(gx)
