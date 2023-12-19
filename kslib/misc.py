@@ -58,8 +58,6 @@ def myxcor(x:Tuple, y:Tuple, ti=1e-3, standardize=True, normalize=True):
     if standardize:
         tx, cx = myxcor(x,x,standardize=False)
         ty, cy = myxcor(y,y,standardize=False)
-        print(f'{cx[tx==0]=}')
-        print(f'{cy[ty==0]=}')
-        cor /= np.sqrt(cx[tx==0]) * np.sqrt(cy[ty==0])
+        cor /= np.sqrt(cx[tx==0]).clip(1e-7) * np.sqrt(cy[ty==0]).clip(1e-7)
 
     return tuple([tau, cor])
