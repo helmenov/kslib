@@ -1,3 +1,4 @@
+#%%
 import numpy as np
 from typing import Tuple
 from scipy import fftpack as scifft
@@ -8,7 +9,7 @@ def mylogx(xy:Tuple):
     lx = np.log2(xy[0].clip(1e-7))
     return lx,xy[1]
 
-def myxcor_xneq(x:Tuple, y:Tuple, ti=1e-3, standardize=True):
+def myxcor(x:Tuple, y:Tuple, ti=1e-3, standardize=True):
     """cross correlation R_{x,y}(tau), in case
         timings(indices) for x is  differ from those for y.
 
@@ -26,7 +27,7 @@ def myxcor_xneq(x:Tuple, y:Tuple, ti=1e-3, standardize=True):
     ly = np.floor((np.amax(y[0]) -t_begin)/ ti + 1).astype(int)
     N = lx if lx > ly else ly
     tl = lx + ly - 1
-    tau = (np.arange(tl)-ly+1)*ti
+    tau = (np.arange(tl)-ly)*ti
 
     gx = np.zeros(lx)
     gx[((x[0]-t_begin) / ti).astype(int)] = x[1]
@@ -41,8 +42,8 @@ def myxcor_xneq(x:Tuple, y:Tuple, ti=1e-3, standardize=True):
     Gxy = Gx * np.conj(Gy)
     cor = np.real(scifft.ifft(Gxy)) #/(N*ti)
     if standardize:
-        tx, cx = myxcor_xneq(x,x,standardize=False)
-        ty, cy = myxcor_xneq(y,y,standardize=False)
+        tx, cx = myxcor(x,x,standardize=False)
+        ty, cy = myxcor(y,y,standardize=False)
         cor /= np.sqrt(cx[tx==0]) * np.sqrt(cy[ty==0])
 
     return tuple([tau, cor])
