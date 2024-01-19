@@ -163,12 +163,12 @@ def logical_xcor(x:Tuple, y:Tuple, ti=1e-3, standardize=True):
     zy = np.zeros(ly)
     zy[((y[0]-t_begin) / ti).astype(int)] = y[1]
 
-    zx = booleanize(zx)
-    #zx = Otsu(zx)
+    #zx = booleanize(zx)
+    zx = Otsu(zx)
     gx = polar(zx)
 
-    zy = booleanize(zy)
-    #zy = Otsu(zy)
+    #zy = booleanize(zy)
+    zy = Otsu(zy)
     gy = polar(zy)
 
     # 巡回畳み込みFFTによる相互相関
