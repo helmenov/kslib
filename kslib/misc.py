@@ -144,10 +144,10 @@ def logical_xcor(x:Tuple, y:Tuple, ti=1e-3, standardize=True):
 
     def booleanize(a):
         # Convert Real Number Datum to Boolean {0:False,1:True} Datum
-        SIGMA_FACTOR = 1
+        amax = np.max(a)
+        t = amax/2
         if a.dtype != 'bool':
-            print(f'mean:{a.mean()}, std:{a.std()}')
-            b = np.array([True if ai > a.mean() + SIGMA_FACTOR * a.std() else False for ai in a])
+            b = np.array([True if ai > t else False for ai in a])
         else:
             b = np.copy(a)
         return b
