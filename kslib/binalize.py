@@ -1,3 +1,5 @@
+import numpy as np
+
 def Otsu(x):
 
     def VarWithin(x,t):
@@ -19,7 +21,7 @@ def Otsu(x):
 
         return w0 * v0 + w1 * v1
 
-    dt = min(diff(sorted(x)))
+    dt = min(np.diff(sorted(x)))
     t_min = min(x)
     t_max = max(x)
     t_range = np.arange(t_min,t_max,dt)
