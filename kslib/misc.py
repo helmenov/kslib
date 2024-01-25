@@ -3,6 +3,7 @@ from typing import Tuple
 
 import numpy as np
 from scipy import fftpack as scifft
+from kslib import binalize
 
 # それぞれのスペクトルの横軸をlog2する関数
 def mylogx(xy:Tuple):
@@ -173,11 +174,11 @@ def logical_xcor(x:Tuple, y:Tuple, ti=1e-3, standardize=True):
     zy[((y[0]-t_begin) / ti).astype(int)] = y[1]
 
     #zx = booleanize(zx)
-    zx = Otsu(zx)
+    zx = binalize.Otsu(zx)
     gx = polar(zx)
 
     #zy = booleanize(zy)
-    zy = Otsu(zy)
+    zy = binalize.Otsu(zy)
     gy = polar(zy)
 
     # 巡回畳み込みFFTによる相互相関
