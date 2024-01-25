@@ -24,7 +24,8 @@ def Otsu(x):
     dt = min(np.diff(sorted(x)))
     t_min = min(x)
     t_max = max(x)
-    t_range = np.arange(t_min,t_max,dt)
+    T = int((t_max - t_min)/dt)
+    t_range = np.arange(T) * dt + t_min
     criteria_ = [VarWithin(x,t) for t in t_range]
     t = t_range[np.argmin(criteria_)] # best_threshold
 
