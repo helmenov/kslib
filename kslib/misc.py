@@ -4,35 +4,6 @@ from typing import Tuple
 import numpy as np
 from scipy import fftpack as scifft
 
-
-def Otsu(x):
-    def VarWithin(x,t):
-        y = np.full_like(x,False)
-        y[x>=t] = True
-        N = len(x)
-        n1 = np.count_nonzero(y)
-        w1 = n1/N
-        w0 = 1-w1
-
-        if w0 == 0 or w1 == 0:
-            return np.nan
-
-        y1 = x[y==True]
-        y0 = x[y==False]
-
-        v0 = np.var(y0) if len(y0)>0 else 0
-        v1 = np.var(y1) if len(y1)>0 else 0
-
-        return w0 * v0 + w1 * v1
-
-    RANGE = 44100
-    t_range = range(RANGE)*np.max(x)/RANGE
-    criteria_ = [VarWithin(x,t) for t in t_range]
-    t = t_range[np.argmin(criteria_)] # best_threshold
-
-    y = [True if xi > t else False for xi in x]
-
-    return np.array(y)
 # それぞれのスペクトルの横軸をlog2する関数
 def mylogx(xy:Tuple):
     """(x,y) -> (l, y), l=log2(x)
@@ -61,6 +32,42 @@ def z(x):
     xx = (x-m)/s
     return xx
 
+def correlate_t(x:Tuple, y:Tuple, normalize == True):
+    tx, vx = x
+    ty, vy = y
+    tau = list({Tx-Ty for Tx in tx for Ty in ty}) # setにした時点で重複消失
+    tau = np.array(sorted(tau))
+    K = len(tau)
+    cor = np.zeros(K,dtype='complex')
+    for k, tau_k in enumerate(tau):
+        for i, Tx  in enumerate(tx):
+            for j, Ty in enumerate(ty):
+                if Ty == Tx - tau_k:
+                    cor[k] += vx[i] * np.conj(vy[j])
+    if normalize == True:
+        cor_x, tau_x = correlate_t(x,x, normalize=False)
+        cor_y, tau_y = correlate_t(y,y, normalize=False)
+        ix = np.where(tau_x==0)[0]
+        iy = np.where(tau_y==0)[0]
+        cor /= np.sqrt(cor_x[ix]*np.conj(cor_y[iy]))
+
+    return cor, tau
+
+def convolute_t(x,Tuple, y:Tuple):
+    tx, vx = x
+    ty, vy = y
+    tz = list({Tx+Ty for Tx in tx for Ty in ty}) # setにした時点で重複消失
+    tz = np.array(sorted(tz))
+    L = len(tz)
+    conv = np.zeros(L,dtype='complex')
+    for k, tz_k in enumerate(tz):
+        for i, Tx  in enumerate(tx):
+            for j, Ty in enumerate(ty):
+                if Ty == tz_k - Tx:
+                    conv[k] += vx[i] * np.conj(vy[j])
+    return conv, tz
+
+
 def myxcor(x:Tuple, y:Tuple, ti=1e-3, standardize=True, normalize=True):
     """cross correlation R_{x,y}(tau), in case
         timings(indices) for x is  differ from those for y.
@@ -88,6 +95,8 @@ def myxcor(x:Tuple, y:Tuple, ti=1e-3, standardize=True, normalize=True):
     else:
         zx = x[1]
         zy = y[1]
+
+
 
     # [i: 1,3,6]
     # [x: 2,10,37]
@@ -186,14 +195,3 @@ def logical_xcor(x:Tuple, y:Tuple, ti=1e-3, standardize=True):
         cor /= np.sqrt(np.abs(cx[tx==0])) * np.sqrt(np.abs(cy[ty==0]))
 
     return tuple([tau, cor])
-
-if __name__ == '__main__':
-    x = np.random.binomial(1,0.1,100)
-    i = 2*np.array(range(len(x)))
-    y = x
-    x = (i,x)
-    y = (i+77,y)
-    r = logical_xcor(x,y)
-    imax = np.argmax(r[1])
-    print(r[0][imax], r[1][imax])
-
