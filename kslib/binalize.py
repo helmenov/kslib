@@ -21,7 +21,7 @@ def Otsu(x):
 
         return w0 * v0 + w1 * v1
 
-    dt = min(np.diff(sorted(x)))
+    dt = min(set(np.diff(sorted(set(x)))))
     t_min = min(x)
     t_max = max(x)
     T = int((t_max - t_min)/dt)
