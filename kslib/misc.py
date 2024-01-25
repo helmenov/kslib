@@ -32,7 +32,7 @@ def z(x):
     xx = (x-m)/s
     return xx
 
-def correlate_t(x:Tuple, y:Tuple, normalize == True):
+def correlate_t(x:Tuple, y:Tuple, normalize = True):
     tx, vx = x
     ty, vy = y
     tau = list({Tx-Ty for Tx in tx for Ty in ty}) # setにした時点で重複消失
