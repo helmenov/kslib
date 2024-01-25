@@ -165,7 +165,8 @@ def logical_xcor(x:Tuple, y:Tuple, ti=1e-3, standardize=True):
     def polar(x):
         # Convert q-ary datum to q-polar complex value datum. x must not be q-level.
         q = len(set(x))
-        y = np.exp(1j * 2 * np.pi / q * x)
+        xx = np.array(x).astype('complex')
+        y = np.exp(1j * 2 * np.pi / q * xx)
         return y
 
     zx = np.zeros(lx)  # 値のないところは 0
