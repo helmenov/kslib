@@ -174,11 +174,11 @@ def logical_xcor(x:Tuple, y:Tuple, ti=1e-3, standardize=True):
     zy = np.zeros(ly)
     zy[((y[0]-t_begin) / ti).astype(int)] = y[1]
 
-    #zx = booleanize(zx)
+    zx = booleanize(zx)
     #zx = binalize.Otsu(zx)
     zx = polar(zx)
 
-    #zy = booleanize(zy)
+    zy = booleanize(zy)
     #zy = binalize.Otsu(zy)
     zy = polar(zy)
 
