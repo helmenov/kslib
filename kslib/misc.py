@@ -176,15 +176,15 @@ def logical_xcor(x:Tuple, y:Tuple, ti=1e-3, standardize=True):
 
     #zx = booleanize(zx)
     #zx = binalize.Otsu(zx)
-    gx = polar(zx)
+    zx = polar(zx)
 
     #zy = booleanize(zy)
     #zy = binalize.Otsu(zy)
-    gy = polar(zy)
+    zy = polar(zy)
 
     # 巡回畳み込みFFTによる相互相関
-    gx = np.r_[np.zeros(ly-1,dtype='complex'), gx]
-    gy = np.r_[gy, np.zeros(lx-1,dtype='complex')]
+    gx = np.r_[np.zeros(ly-1,dtype='complex'), zx]
+    gy = np.r_[zy, np.zeros(lx-1,dtype='complex')]
     Gx = scifft.fft(gx)
     Gy = scifft.fft(gy)
     Gxy = Gx * np.conj(Gy)

@@ -72,13 +72,12 @@ def cqt_kernel(fs,fmin,fmax,q,mode="Q"):
     return S
 
 
-def cqt(x,fs,fmin=60, fmax=None):
+def cqt(x,fs,fmin=60, fmax=None,b=24):
     L = len(x)
     F_nyq = fs/2
 
     if fmax is None:
         fmax = F_nyq
-    b = 24
     S = cqt_kernel(fs,fmin=fmin,fmax=fmax,q=b,mode='b')
     nfft = S.shape[0]
     K = S.shape[1]
