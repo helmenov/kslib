@@ -80,9 +80,9 @@ def cqt(x,fs,fmin=60, fmax=None,b=24):
         fmax = F_nyq
     S,N,K = cqt_kernel(fs,fmin=fmin,fmax=fmax,q=b,mode='b')
     nfft = N # CQTカーネルの必要点数
-    if L < nfft:
-        print(f"frame length ({L}) is shorter than CQT_NFFT({nfft})!")
-        print(f"may not enough resolution")
+    #if L < nfft:
+    #    print(f"frame length ({L}) is shorter than CQT_NFFT({nfft})!")
+    #    print(f"may not enough resolution")
 
     hnfft = int(nfft/2)
     xx = np.zeros(L+nfft)
